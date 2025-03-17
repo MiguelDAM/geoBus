@@ -1,3 +1,7 @@
+!!!IMPORTANTE EJECUTAR ESTE COMANDO EN TERMINAL ANTES DE HACER NADA!!!
+npm install @vis.gl/react-google-maps
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
