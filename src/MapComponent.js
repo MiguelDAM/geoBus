@@ -173,7 +173,7 @@ function MapComponent() {
                                 };
 
                                 moveBus();
-                                setInterval(moveBus, 5000); // Move every 20 seconds
+                                setInterval(moveBus, 20000); // Move every 20 seconds
                             }
                         },
                         (error) => {
