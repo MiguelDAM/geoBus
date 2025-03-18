@@ -1,12 +1,17 @@
-import MapComponent from './MapComponent';
-import './App.css';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import './index.css'; 
+import Login from './Login';
+import Mapa from './MapComponent'; 
 
 function App() {
     return (
         <div className="App">
-            <header className="App-header">
-                <MapComponent />
-            </header>
+            <BrowserRouter>
+                <Routes>
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/mapa" element={<Mapa />} />
+                </Routes>
+            </BrowserRouter>
         </div>
     );
 }
