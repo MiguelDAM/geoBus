@@ -1,9 +1,20 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 const PARADAS = {
     exterior: { lat: 28.196, lng: -14.119056 },
     interior: { lat: 28.193528, lng: -14.116056 },
 };
+
+// Define puntos intermedios que representen la carretera
+const ROAD_POINTS = [
+    { lat: 28.195838, lng: -14.11906 },
+    { lat: 28.196, lng: -14.118 },
+    { lat: 28.25, lng: -14.121 },
+    { lat: 28.45, lng: -14.121 },
+    { lat: 28.65, lng: -14.121 },
+    { lat: 28.85, lng: -14.121 },
+    { lat: 28.193528, lng: -14.116056 },
+];
 
 function MapComponent() {
     const [mapsLoaded, setMapsLoaded] = useState(false);
@@ -108,79 +119,135 @@ function MapComponent() {
                     map.addObject(busMarker);
                     busMarkerRef.current = busMarker;
 
-                    const router = platform.getRoutingService();
+                    // Función para calcular la ruta y añadirla al mapa
+                    const calculateRouteFromAtoB = () => {
+                        const router = platform.getRoutingService();
 
-                    const routeRequestParams = {
-                        mode: 'fastest;car',
-                        representation: 'display',
-                        waypoint0: `geo!${PARADAS.exterior.lat},${PARADAS.exterior.lng}`,
-                        waypoint1: `geo!${PARADAS.interior.lat},${PARADAS.interior.lng}`,
-                        routeattributes: 'waypoints,summary,shape,legs',
+                        const routeRequestParams = {
+                            routingMode: 'fast',
+                            transportMode: 'car',
+                            origin: `${PARADAS.exterior.lat},${PARADAS.exterior.lng}`,
+                            destination: `${PARADAS.interior.lat},${PARADAS.interior.lng}`,
+                            return: 'polyline,turnByTurnActions,actions,instructions,travelSummary',
+                        };
+
+                        router.calculateRoute(
+                            routeRequestParams,
+                            (result) => onResult(result, map),
+                            (error) => {
+                                console.error(
+                                    'Error calculating route:',
+                                    error
+                                );
+                                setError('Failed to calculate route.');
+                            }
+                        );
                     };
 
-                    router.calculateRoute(
-                        routeRequestParams,
-                        (result) => {
-                            if (result.response.route) {
-                                const route = result.response.route[0];
-                                const routeShape = route.shape.map((point) => {
-                                    const parts = point.split(',');
-                                    return {
-                                        lat: parseFloat(parts[0]),
-                                        lng: parseFloat(parts[1]),
-                                    };
-                                });
+                    // Función para manejar el resultado del cálculo de la ruta
+                    const onResult = (result, map) => {
+                        if (result.routes.length) {
+                            result.routes.forEach((route) => {
+                                addRouteShapeToMap(route, map);
+                                addManueversToMap(route, map);
+                            });
+                        }
+                    };
 
-                                const lineString =
-                                    new window.H.geo.LineString();
-                                routeShape.forEach((point) => {
-                                    lineString.pushPoint(point);
-                                });
+                    // Función para añadir la forma de la ruta al mapa
+                    const addRouteShapeToMap = (route, map) => {
+                        route.sections.forEach((section) => {
+                            let linestring =
+                                window.H.geo.LineString.fromFlexiblePolyline(
+                                    section.polyline
+                                );
 
-                                const polyline = new window.H.map.Polyline(
-                                    lineString,
+                            let polyline = new window.H.map.Polyline(
+                                linestring,
+                                {
+                                    style: {
+                                        lineWidth: 4,
+                                        strokeColor: 'rgba(0, 128, 255, 0.7)',
+                                    },
+                                }
+                            );
+
+                            map.addObject(polyline);
+                            map.getViewModel().setLookAtData({
+                                bounds: polyline.getBoundingBox(),
+                            });
+                        });
+                    };
+
+                    // Función para añadir las maniobras al mapa
+                    const addManueversToMap = (route, map) => {
+                        route.sections.forEach((section) => {
+                            let poly =
+                                window.H.geo.LineString.fromFlexiblePolyline(
+                                    section.polyline
+                                ).getLatLngAltArray();
+
+                            section.actions.forEach((action, idx) => {
+                                const icon = new window.H.map.Icon(
+                                    '<svg width="24" height="24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="white" stroke="blue" stroke-width="2" /></svg>',
                                     {
-                                        style: {
-                                            lineWidth: 4,
-                                            strokeColor:
-                                                'rgba(0, 128, 255, 0.7)',
-                                        },
+                                        anchor: { x: 12, y: 12 },
                                     }
                                 );
-                                map.addObject(polyline);
 
-                                const moveBus = () => {
-                                    const duration = 10000; // 10 seconds
-                                    const steps = 100;
-                                    const interval = duration / steps;
-                                    let step = 0;
+                                const marker = new window.H.map.Marker(
+                                    {
+                                        lat: poly[action.offset * 3],
+                                        lng: poly[action.offset * 3 + 1],
+                                    },
+                                    { icon: icon }
+                                );
 
-                                    const animate = () => {
-                                        if (step <= steps) {
-                                            const progress = step / steps;
-                                            const index = Math.floor(
-                                                progress *
-                                                    (routeShape.length - 1)
-                                            );
-                                            const point = routeShape[index];
-                                            busMarker.setGeometry(point);
-                                            step++;
-                                            requestAnimationFrame(animate);
-                                        }
-                                    };
+                                map.addObject(marker);
+                            });
+                        });
+                    };
 
-                                    animate();
+                    // Llamar a la función para calcular la ruta
+                    calculateRouteFromAtoB();
+
+                    // Simulación de movimiento siguiendo la carretera
+                    const moveBus = () => {
+                        const duration = 10000; // 10 seconds
+                        const steps = ROAD_POINTS.length - 1;
+                        const interval = duration / steps;
+                        let step = 0;
+
+                        const animate = () => {
+                            if (step < steps) {
+                                const start = ROAD_POINTS[step];
+                                const end = ROAD_POINTS[step + 1];
+                                const progress =
+                                    (Date.now() % interval) / interval;
+                                const newPos = {
+                                    lat:
+                                        start.lat +
+                                        (end.lat - start.lat) * progress,
+                                    lng:
+                                        start.lng +
+                                        (end.lng - start.lng) * progress,
                                 };
-
-                                moveBus();
-                                setInterval(moveBus, 20000); // Move every 20 seconds
+                                busMarker.setGeometry(newPos);
+                                if (progress >= 1) {
+                                    step++;
+                                }
+                                requestAnimationFrame(animate);
+                            } else {
+                                step = 0;
+                                requestAnimationFrame(animate);
                             }
-                        },
-                        (error) => {
-                            console.error('Error calculating route:', error);
-                            setError('Failed to calculate route.');
-                        }
-                    );
+                        };
+
+                        animate();
+                    };
+
+                    moveBus();
+                    setInterval(moveBus, 20000); // Move every 20 seconds
                 }
             } catch (e) {
                 console.error('Error initializing HERE Maps:', e);
@@ -193,7 +260,7 @@ function MapComponent() {
         <div style={{ width: '100%', height: 'calc(100vh - 60px)' }}>
             <div
                 id="mapContainer"
-                style={{ width: '100%', height: '100%' }}
+                style={{ width: '100%', height: '100%', position: 'relative' }}
             ></div>
             {error && <div style={{ color: 'red' }}>{error}</div>}
         </div>
