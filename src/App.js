@@ -1,19 +1,25 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import './index.css'; 
-import Login from './Login';
-import Mapa from './MapComponent'; 
+import React from "react";
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import Login from "./Login";
+import Navbar from "./Navbar";
+import MapComponent from "./MapComponent";
+import "./output.css";
 
 function App() {
-    return (
-        <div className="App">
-            <BrowserRouter>
-                <Routes>
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/mapa" element={<Mapa />} />
-                </Routes>
-            </BrowserRouter>
-        </div>
-    );
+  return (
+    <Router>
+      <div className="App">
+        <header className="App-header">
+          <Navbar />
+        </header>
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/map" element={<MapComponent />} />
+          <Route path="/contact" element={<div>Contacto</div>} />
+        </Routes>
+      </div>
+    </Router>
+  );
 }
 
 export default App;

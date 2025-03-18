@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import "./Login.css";
 import { useNavigate } from 'react-router-dom'; // Importa useNavigate
 import eyeOpen from './components/images/eye-open.png'; // Importa la imagen del ojo abierto
 import eyeClosed from './components/images/eye-closed.png'; // Importa la imagen del ojo cerrado
@@ -15,7 +16,7 @@ function Login() {
   };
 
   const handleGoToMap = () => {
-    navigate('/mapa'); // Redirige a la ruta del mapa
+    navigate('/map'); // Redirige a la ruta del mapa
   };
 
   return (
@@ -50,7 +51,7 @@ function Login() {
           </label>
           <div className="relative">
             <input
-              className="shadow appearance-none border rounded w-full py-2 pl-10 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="shadow appearance-none border rounded w-full py-2 pl-3 text-gray-700 leading-tight focus:outline-none focus:ring-2 focus:ring-blue-500"
               id="password"
               type={showPassword ? "text" : "password"}
               value={password}
