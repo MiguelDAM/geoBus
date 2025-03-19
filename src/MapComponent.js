@@ -1,19 +1,26 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-const PARADAS = {
-    exterior: { lat: 28.196, lng: -14.119056 },
+const BUS_STOPS = {
+    exterior: { lat: 28.195838, lng: -14.11906 },
     interior: { lat: 28.193528, lng: -14.116056 },
 };
 
-// Define puntos intermedios que representen la carretera
+// Predefined points that define the bus route
 const ROAD_POINTS = [
-    { lat: 28.195838, lng: -14.11906 },
-    { lat: 28.196, lng: -14.118 },
-    { lat: 28.25, lng: -14.121 },
-    { lat: 28.45, lng: -14.121 },
-    { lat: 28.65, lng: -14.121 },
-    { lat: 28.85, lng: -14.121 },
-    { lat: 28.193528, lng: -14.116056 },
+    { lat: BUS_STOPS.exterior.lat, lng: BUS_STOPS.exterior.lng },
+    { lat: 28.195764, lng: -14.118529 },
+    { lat: 28.195624, lng: -14.118296 },
+    { lat: 28.195752, lng: -14.11795 },
+    { lat: 28.196074, lng: -14.117107 },
+    { lat: 28.196331, lng: -14.116405 },
+    { lat: 28.196591, lng: -14.115774 },
+    { lat: 28.196683, lng: -14.115418 },
+    { lat: 28.1964, lng: -14.115222 },
+    { lat: 28.195267, lng: -14.115377 },
+    { lat: 28.194894, lng: -14.115439 },
+    { lat: 28.194565, lng: -14.115503 },
+    { lat: 28.194083, lng: -14.115707 },
+    { lat: BUS_STOPS.interior.lat, lng: BUS_STOPS.interior.lng },
 ];
 
 function MapComponent() {
@@ -74,7 +81,7 @@ function MapComponent() {
                         document.getElementById('mapContainer'),
                         defaultLayers.vector.normal.map,
                         {
-                            center: PARADAS.exterior,
+                            center: BUS_STOPS.exterior,
                             zoom: 15,
                             pixelRatio: window.devicePixelRatio || 1,
                         }
@@ -96,7 +103,7 @@ function MapComponent() {
                     ui.getControl('mapsettings').setVisibility(false);
 
                     const markerExterior = new window.H.map.Marker(
-                        PARADAS.exterior,
+                        BUS_STOPS.exterior,
                         {
                             icon: new window.H.map.Icon(
                                 '<svg width="24" height="24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="blue" /></svg>'
@@ -106,7 +113,7 @@ function MapComponent() {
                     map.addObject(markerExterior);
 
                     const markerInterior = new window.H.map.Marker(
-                        PARADAS.interior,
+                        BUS_STOPS.interior,
                         {
                             icon: new window.H.map.Icon(
                                 '<svg width="24" height="24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="red" /></svg>'
@@ -115,139 +122,90 @@ function MapComponent() {
                     );
                     map.addObject(markerInterior);
 
-                    const busMarker = new window.H.map.Marker(PARADAS.exterior);
+                    const busMarker = new window.H.map.Marker(
+                        BUS_STOPS.exterior
+                    );
                     map.addObject(busMarker);
                     busMarkerRef.current = busMarker;
 
-                    // Función para calcular la ruta y añadirla al mapa
-                    const calculateRouteFromAtoB = () => {
-                        const router = platform.getRoutingService();
+                    const lineString = new window.H.geo.LineString();
+                    ROAD_POINTS.forEach((point) => {
+                        lineString.pushPoint(point);
+                    });
 
-                        const routeRequestParams = {
-                            routingMode: 'fast',
-                            transportMode: 'car',
-                            origin: `${PARADAS.exterior.lat},${PARADAS.exterior.lng}`,
-                            destination: `${PARADAS.interior.lat},${PARADAS.interior.lng}`,
-                            return: 'polyline,turnByTurnActions,actions,instructions,travelSummary',
-                        };
+                    const polyline = new window.H.map.Polyline(lineString, {
+                        style: {
+                            lineWidth: 6,
+                            strokeColor: 'rgba(0, 128, 255, 0.7)',
+                        },
+                    });
+                    map.addObject(polyline);
 
-                        router.calculateRoute(
-                            routeRequestParams,
-                            (result) => onResult(result, map),
-                            (error) => {
-                                console.error(
-                                    'Error calculating route:',
-                                    error
-                                );
-                                setError('Failed to calculate route.');
-                            }
-                        );
-                    };
+                    // Enhanced animation with pauses
+                    const moveBus = () => {
+                        const totalPoints = ROAD_POINTS.length;
+                        let currentIndex = 0;
+                        let direction = 1;
+                        let startTime = null;
+                        let isPausing = false;
+                        const segmentDuration = 8000; // Speed control
+                        const pauseDuration = 10000; // 8 seconds of pause
 
-                    // Función para manejar el resultado del cálculo de la ruta
-                    const onResult = (result, map) => {
-                        if (result.routes.length) {
-                            result.routes.forEach((route) => {
-                                addRouteShapeToMap(route, map);
-                                addManueversToMap(route, map);
-                            });
-                        }
-                    };
+                        const animate = (timestamp) => {
+                            if (isPausing) return;
 
-                    // Función para añadir la forma de la ruta al mapa
-                    const addRouteShapeToMap = (route, map) => {
-                        route.sections.forEach((section) => {
-                            let linestring =
-                                window.H.geo.LineString.fromFlexiblePolyline(
-                                    section.polyline
-                                );
+                            if (!startTime) startTime = timestamp;
 
-                            let polyline = new window.H.map.Polyline(
-                                linestring,
-                                {
-                                    style: {
-                                        lineWidth: 4,
-                                        strokeColor: 'rgba(0, 128, 255, 0.7)',
-                                    },
-                                }
+                            const elapsed = timestamp - startTime;
+                            const progress = Math.min(
+                                elapsed / segmentDuration,
+                                1
                             );
 
-                            map.addObject(polyline);
-                            map.getViewModel().setLookAtData({
-                                bounds: polyline.getBoundingBox(),
-                            });
-                        });
-                    };
+                            const nextIndex = currentIndex + direction;
+                            const currentPoint = ROAD_POINTS[currentIndex];
+                            const nextPoint = ROAD_POINTS[nextIndex];
 
-                    // Función para añadir las maniobras al mapa
-                    const addManueversToMap = (route, map) => {
-                        route.sections.forEach((section) => {
-                            let poly =
-                                window.H.geo.LineString.fromFlexiblePolyline(
-                                    section.polyline
-                                ).getLatLngAltArray();
+                            // Updates the bus position
+                            const newPos = {
+                                lat:
+                                    currentPoint.lat +
+                                    (nextPoint.lat - currentPoint.lat) *
+                                        progress,
+                                lng:
+                                    currentPoint.lng +
+                                    (nextPoint.lng - currentPoint.lng) *
+                                        progress,
+                            };
+                            busMarkerRef.current.setGeometry(newPos);
 
-                            section.actions.forEach((action, idx) => {
-                                const icon = new window.H.map.Icon(
-                                    '<svg width="24" height="24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="10" fill="white" stroke="blue" stroke-width="2" /></svg>',
-                                    {
-                                        anchor: { x: 12, y: 12 },
-                                    }
-                                );
+                            if (progress >= 1) {
+                                currentIndex += direction;
+                                startTime = null;
 
-                                const marker = new window.H.map.Marker(
-                                    {
-                                        lat: poly[action.offset * 3],
-                                        lng: poly[action.offset * 3 + 1],
-                                    },
-                                    { icon: icon }
-                                );
-
-                                map.addObject(marker);
-                            });
-                        });
-                    };
-
-                    // Llamar a la función para calcular la ruta
-                    calculateRouteFromAtoB();
-
-                    // Simulación de movimiento siguiendo la carretera
-                    const moveBus = () => {
-                        const duration = 10000; // 10 seconds
-                        const steps = ROAD_POINTS.length - 1;
-                        const interval = duration / steps;
-                        let step = 0;
-
-                        const animate = () => {
-                            if (step < steps) {
-                                const start = ROAD_POINTS[step];
-                                const end = ROAD_POINTS[step + 1];
-                                const progress =
-                                    (Date.now() % interval) / interval;
-                                const newPos = {
-                                    lat:
-                                        start.lat +
-                                        (end.lat - start.lat) * progress,
-                                    lng:
-                                        start.lng +
-                                        (end.lng - start.lng) * progress,
-                                };
-                                busMarker.setGeometry(newPos);
-                                if (progress >= 1) {
-                                    step++;
+                                // Verifies if the bus has reached the last point
+                                if (
+                                    currentIndex <= 0 ||
+                                    currentIndex >= totalPoints - 1
+                                ) {
+                                    isPausing = true;
+                                    setTimeout(() => {
+                                        isPausing = false;
+                                        direction *= -1;
+                                        requestAnimationFrame(animate);
+                                    }, pauseDuration);
+                                } else {
+                                    requestAnimationFrame(animate);
                                 }
-                                requestAnimationFrame(animate);
                             } else {
-                                step = 0;
                                 requestAnimationFrame(animate);
                             }
                         };
 
-                        animate();
+                        requestAnimationFrame(animate);
                     };
 
-                    moveBus();
-                    setInterval(moveBus, 20000); // Move every 20 seconds
+                    moveBus(); // Starts animation
                 }
             } catch (e) {
                 console.error('Error initializing HERE Maps:', e);
