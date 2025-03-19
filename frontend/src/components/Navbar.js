@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import SelectorLineasClases from "./Lineas";
-import "./output.css";
+import SelectorLineasClases from "../pages/Lineas";
+import "../styles/output.css";
 
 function Navbar() {
   return (

@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import "./Login.css";
+import "../styles/Login.css";
 import { useNavigate } from 'react-router-dom'; // Importa useNavigate
-import eyeOpen from './components/images/eye-open.png'; // Importa la imagen del ojo abierto
-import eyeClosed from './components/images/eye-closed.png'; // Importa la imagen del ojo cerrado
+import eyeOpen from '../components/images/eye-open.png'; // Importa la imagen del ojo abierto
+import eyeClosed from '../components/images/eye-closed.png'; // Importa la imagen del ojo cerrado
 
 function Login() {
   const [user, setUser] = useState("");

@@ -1,9 +1,8 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Routes, useLocation } from "react-router-dom";
-import Login from "./Login";
-import Lineas from "./Lineas";
-import Navbar from "./Navbar";
-import MapComponent from "./MapComponent";
+import Login from "./pages/Login";
+import Navbar from "./components/Navbar";
+import MapComponent from "./components/MapComponent";
 import "./output.css";
 
 function AppContent() {
