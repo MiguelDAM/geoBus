@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Routes, useLocation } from "react-route
 import Login from "./pages/Login";
 import Navbar from "./components/Navbar";
 import MapComponent from "./components/MapComponent";
-import "./output.css";
+import "./styles/output.css";
 
 function AppContent() {
   const location = useLocation();
