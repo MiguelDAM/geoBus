@@ -73,3 +73,100 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+
+## Estructura de Carpetas
+```
+📦 proyecto/
+│── 📂 backend/           # Carpeta del backend (FastAPI + SQLModel)
+│   ├── 📂 app/
+│   │   ├── 📂 models/    # Modelos de base de datos con SQLModel
+│   │   ├── 📂 routes/    # Rutas de la API (endpoints)
+│   │   ├── 📂 services/  # Lógica de negocio
+│   │   ├── 📂 schemas/   # Esquemas Pydantic para validación de datos
+│   │   ├── 📂 db/        # Configuración de la base de datos
+│   │   ├── 📂 core/      # Configuración global (CORS, JWT, etc.)
+│   │   ├── 📂 middlewares/ # Middlewares de autenticación, logs, etc.
+│   │   ├── main.py      # Punto de entrada de FastAPI
+│   ├── requirements.txt # Dependencias de Python
+│   ├── .env             # Variables de entorno
+│   ├── Dockerfile       # Configuración para Docker (opcional)
+│── 📂 frontend/         # Carpeta del frontend (React + Tailwind)
+│   ├── 📂 src/
+│   │   ├── 📂 components/  # Componentes reutilizables
+│   │   ├── 📂 pages/       # Páginas principales (Home, Login, Dashboard)
+│   │   ├── 📂 hooks/       # Custom Hooks para lógica reutilizable
+│   │   ├── 📂 context/     # Manejo de estado global (Auth, Theme, etc.)
+│   │   ├── 📂 services/    # Llamadas a la API con fetch o axios
+│   │   ├── 📂 styles/      # Configuración de TailwindCSS
+│   │   ├── App.jsx        # Componente principal de React
+│   │   ├── main.jsx       # Punto de entrada de React
+│   ├── public/            # Archivos estáticos (favicon, index.html, etc.)
+│   ├── package.json       # Dependencias del frontend
+│   ├── tailwind.config.js # Configuración de TailwindCSS
+│── 📂 docs/               # Documentación del proyecto
+│── README.md              # Información del proyecto
+│── .gitignore             # Archivos ignorados en Git
+│── docker-compose.yml     # Configuración para levantar todo en Docker (opcional)
+```
+
+---
+
+## Descripción de la Estructura
+
+### Backend 
+
+- `models/`: Contiene los modelos de la base de datos usando SQLModel.
+- `routes/`: Define las rutas de la API.
+- `services/`: Contiene la lógica de negocio.
+- `schemas/`: Define los esquemas Pydantic para validar los datos.
+- `db/`: Configuración y conexión a la base de datos.
+- `core/`: Configuración global (CORS, autenticación, etc.).
+- `middlewares/`: Funciones intermedias para autenticación, logs, etc.
+- `main.py`: Archivo principal que inicializa FastAPI.
+
+### Frontend
+
+- `components/`: Contiene componentes reutilizables.
+- `pages/`: Define las páginas principales del sitio.
+- `hooks/`: Custom hooks para manejar lógica compartida.
+- `context/`: Manejo de estado global:
+  - `AuthContext.jsx`: Maneja autenticación.
+  - `ThemeContext.jsx`: Maneja tema oscuro/claro.
+- `services/`: Llamadas a la API.
+- `styles/`: Configuración de TailwindCSS.
+- `App.jsx`: Componente principal de la aplicación.
+- `main.jsx`: Punto de entrada de React.
+
+---
+
+## Instrucciones de Instalación
+
+### Backend (FastAPI)
+
+```sh
+cd backend
+python -m venv venv
+source venv/bin/activate  # En Windows: venv\Scripts\activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload
+```
+
+### Frontend (React)
+
+```sh
+cd frontend
+npm install
+npm run dev
+```
+
+---
+
+## Notas
+
+- FastAPI genera automáticamente documentación en `http://localhost:8000/docs`.
+- React corre en `http://localhost:5173` (si usan Vite).
+- Configuren variables en `.env` para credenciales y configuración.
+
+---
+
