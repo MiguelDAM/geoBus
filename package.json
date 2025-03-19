@@ -12,8 +12,12 @@
     "lucide-react": "^0.482.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+<<<<<<< HEAD
     "react-icons": "^5.5.0",
     "react-router-dom": "^6.30.0",
+=======
+    "react-router-dom": "^7.3.0",
+>>>>>>> e8c564d70bfb5c52f26a8352a5028da29359ef30
     "react-scripts": "5.0.1",
     "tailwindcss": "^4.0.14",
     "web-vitals": "^2.1.4"
