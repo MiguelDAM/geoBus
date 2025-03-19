@@ -12,11 +12,10 @@ function AppContent() {
   return (
     <div className="App">
       {/* Renderizar Navbar solo si no estamos en la página de Login */}
-      {location.pathname !== "/" && <header className="App-header"><Navbar /></header>}
+      {location.pathname !== "/admin" && <header className="App-header"><Navbar /></header>}
 
       <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/lineas" element={<Lineas />} />
+        <Route path="/admin" element={<Login />} />
         <Route path="/map" element={<MapComponent />} />
         <Route path="/contact" element={<div>Contacto</div>} />
       </Routes>
