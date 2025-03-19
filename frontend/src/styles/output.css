@@ -365,6 +365,24 @@
   .table {
     display: table;
   }
+  .h-60 {
+    height: calc(var(--spacing) * 60);
+  }
+  .h-1000 {
+    height: calc(var(--spacing) * 1000);
+  }
+  .h-1200 {
+    height: calc(var(--spacing) * 1200);
+  }
+  .h-1500 {
+    height: calc(var(--spacing) * 1500);
+  }
+  .h-2500 {
+    height: calc(var(--spacing) * 2500);
+  }
+  .h-\[60px\] {
+    height: 60px;
+  }
   .h-full {
     height: 100%;
   }
