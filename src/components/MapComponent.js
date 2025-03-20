@@ -18,7 +18,7 @@ function calcularPosicionIntermedia(start, end, porcentaje) {
         lat: start.lat + (end.lat - start.lat) * porcentaje,
         lng: start.lng + (end.lng - start.lng) * porcentaje,
     };
-
+}
 
 
     // Predefined points that define the bus route
@@ -240,8 +240,6 @@ function calcularPosicionIntermedia(start, end, porcentaje) {
                 {error && <div style={{ color: 'red' }}>{error}</div>}
             </div>
         );
-
     }
-}
 
 export default MapComponent;
