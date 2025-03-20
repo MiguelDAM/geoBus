@@ -1,28 +1,46 @@
+* {
+  box-sizing: border-box;
+}
+
 .selector-lineas {
-    padding: 20px;
-    font-family: Arial, sans-serif;
-    margin: 0 auto; /* Centra el contenedor */
-    overflow: hidden; /* Oculta el contenido que se desborda si es necesario */
-  }
+  background-color: #1e2939;
+  display: flex; /* Alinea los elementos en una fila */
+  align-items: center; /* Centra verticalmente los elementos */
+  justify-content: center; /* Centra horizontalmente los elementos */
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  margin: 0 auto; /* Centra el contenedor */
+  overflow: hidden; /* Oculta el contenido que se desborda si es necesario */
+}
 
 .lineas-list {
   display: flex;
   justify-content: flex-start;
-  overflow-x: auto;
-  padding-bottom: 10px;
+  overflow-x: hidden; /* Oculta el desbordamiento horizontal */
   flex-wrap: nowrap;
   gap: 33px;
   flex-direction: row;
 }
 
 .boton-linea {
-  padding: 10px 20px;
-  font-size: 14px;
+  display: flex; /* Asegura que el contenido se centre */
+  align-items: center; /* Centra verticalmente el contenido */
+  justify-content: center; /* Centra horizontalmente el contenido */
+  width: 100px; /* Tamaño fijo del botón */
+  height: 50px; /* Tamaño fijo del botón */
+  font-size: 14px; /* Tamaño del texto */
   color: white;
   border: none;
-  border-radius: 5px;
   cursor: pointer;
   white-space: nowrap; /* Evita que el texto se corte */
+  padding: 15px; /* Espaciado interno para el contenido */
+  text-align: center; /* Asegura que el texto esté centrado */
+  box-sizing: border-box; /* Asegura que el borde no aumente el tamaño */
+}
+
+.boton-linea span {
+  display: inline-block; /* Asegura que el contenido ocupe el mismo espacio */
+  min-width: 20px; /* Define un ancho mínimo para el contenido */
 }
 
 .boton-linea1 {
@@ -78,4 +96,29 @@
 }
 .boton-linea111 {
   background-color: #c71585;
+}
+
+.linea-seleccionada {
+  border: 3px solid #ffffff; /* Borde visible */
+  padding: 12px; /* Reduce el padding para compensar el borde */
+}
+
+.navegacion-izquierda,
+.navegacion-derecha {
+  background-color: #1e2939;
+  color: white;
+  border: none;
+  width: 40px;
+  height: 40px;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 10px;
+}
+
+.navegacion-izquierda:hover,
+.navegacion-derecha:hover {
+  background-color: #0056b3;
 }
