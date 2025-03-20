@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import './Lineas.css';  // Asegúrate de importar el archivo CSS
+import '../styles/Lineas.css';  // Asegúrate de importar el archivo CSS
 
 const SelectorLineasClases = () => {
   const [lineaSeleccionada, setLineaSeleccionada] = useState('');
