@@ -295,7 +295,7 @@ function MapComponent() {
     }, [mapsLoaded, routePoints]);
 
     return (
-        <div style={{ width: '100%', height: 'calc(100vh - 154.33px)' }}>
+        <div style={{ width: '100%', height: 'calc(100vh - 68px)' }}>
             <div
                 id="mapContainer"
                 style={{ width: '100%', height: '100%', position: 'relative' }}
