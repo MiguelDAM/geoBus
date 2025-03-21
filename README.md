@@ -78,7 +78,7 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 ## Estructura de Carpetas
 ```
 📦 proyecto/
-│── 📂 backend/           # Carpeta del backend (FastAPI + SQLModel)
+│── 📂 backend/           # Carpeta del backend 
 │   ├── 📂 app/
 │   │   ├── 📂 models/    # Modelos de base de datos con SQLModel
 │   │   ├── 📂 routes/    # Rutas de la API (endpoints)
@@ -91,7 +91,7 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 │   ├── requirements.txt # Dependencias de Python
 │   ├── .env             # Variables de entorno
 │   ├── Dockerfile       # Configuración para Docker (opcional)
-│── 📂 frontend/         # Carpeta del frontend (React + Tailwind)
+│── 📂 frontend/         # Carpeta del frontend 
 │   ├── 📂 src/
 │   │   ├── 📂 components/  # Componentes reutilizables
 │   │   ├── 📂 pages/       # Páginas principales (Home, Login, Dashboard)
@@ -147,10 +147,17 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/t
 ```sh
 cd backend
 python -m venv venv
-source venv/bin/activate  # En Windows: venv\Scripts\activate
+source venv/bin/activate 
 pip install -r requirements.txt
-uvicorn app.main:app --reload
+cd ..
+uvicorn app.main:app --reload #En caso de fallo ejecutar : uvicorn backend.app.main:app --host 127.0.0.1 --port 8080 --reload
 ```
+Para cerrar el entorno virtual y el servidor hacer lo siguiente:
+  - Cerrar el servidor FastApi : Presiona `CTRL + C` en la terminal donde está corriendo el servidor.
+  - Desactivar el entorno virtual :
+  ```sh
+  deactivate
+  ```
 
 ### Frontend (React)
 
@@ -165,7 +172,7 @@ npm run dev
 ## Notas
 
 - FastAPI genera automáticamente documentación en `http://localhost:8000/docs`.
-- React corre en `http://localhost:5173` (si usan Vite).
+- React corre en `http://localhost:5173`.
 - Configuren variables en `.env` para credenciales y configuración.
 
 ---
