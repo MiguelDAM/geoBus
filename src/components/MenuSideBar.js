@@ -3,7 +3,7 @@ import React from 'react';
 function MenuSideBar({ isOpen, toggleSidebar }) {
     return (
         <div
-            className={`fixed top-[154.33px] right-0 h-[calc(100%-154.33px)] bg-white shadow-lg p-4 transition-transform transform ${
+            className={`fixed top-[68px] right-0 h-[calc(100%-68px)] bg-white shadow-lg p-4 transition-transform transform ${
                 isOpen ? 'translate-x-0' : 'translate-x-full'
             } w-full md:w-150 z-50`}
         >
